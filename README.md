@@ -120,7 +120,7 @@ Issues were resolved using standard enterprise troubleshooting practices, includ
 Reinstallation was intentionally avoided in favor of controlled troubleshooting.
 
 ## Documentation
-Supporting documentation, configuration notes, and screenshots are available in the `/docs` and `/screenshots` directories.
+Detailed design and configuration notes are available in the `/docs` and `/screenshots` directory.
 
 ## Skills Demonstrated
 - Linux server administration (Debian)
