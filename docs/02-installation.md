@@ -1,116 +1,132 @@
-# Installation & Deployment (Phase 1)
+# Deployment & Baseline Configuration — osTicket Helpdesk Lab
 
 ## Purpose
-This document outlines the installation and initial deployment of **osTicket** on **Debian 12 (Bookworm)** as part of Phase 1 of the helpdesk home lab. The goal of this phase was to deploy a stable, standalone ticketing system while following realistic system administration and security practices.
 
-Active Directory integration and external service dependencies are intentionally excluded from this phase and will be addressed in Phase 2.
+This document describes the initial deployment and baseline configuration of the osTicket helpdesk platform on Debian GNU/Linux 12. This phase establishes a stable, secure, and validated application baseline suitable for internal enterprise use.
 
-## Operating System Selection
+Identity integration and external dependencies are intentionally excluded at this stage to isolate application deployment from authentication and infrastructure concerns. Those integrations are addressed in subsequent phases.
 
-**Debian GNU/Linux 12 (Bookworm)** was selected for this deployment based on the following considerations:
-- Long-term stability and predictable package availability
-- Native support for PHP 8.2, which is compatible with osTicket
-- Availability of required PHP extensions (including IMAP)
-- Common usage in server environments
+## Deployment Scope and Constraints
 
-Earlier testing on newer Debian releases revealed dependency availability issues, reinforcing the importance of selecting a stable, supported platform for production-style deployments.
+This deployment reflects a common **internal IT service desk** scenario, where the helpdesk platform operates within a trusted network and relies on centralized identity services rather than managing credentials locally.
+
+Key constraints:
+- Single-server deployment
+- Internal-only access
+- No public exposure
+- Security-first baseline configuration
+
+The objective is operational clarity and stability rather than scale or high availability.
+
+## Platform Selection
+
+**Debian GNU/Linux 12 (Bookworm)** was selected based on:
+
+- Long-term stability and predictable update cadence
+- Native compatibility with PHP 8.2, required by osTicket
+- Broad community and enterprise adoption
+- Reliable availability of required PHP extensions (including IMAP)
+
+Testing against newer distributions revealed dependency friction, reinforcing the importance of platform stability over novelty in production-style environments.
 
 ## Base System Preparation
 
-The operating system was installed with a minimal configuration to reduce attack surface and unnecessary resource usage.
+The operating system was installed using a minimal server profile to reduce unnecessary services and attack surface.
+
+Baseline decisions included:
+- No graphical desktop environment
+- SSH-enabled remote administration
+- Immediate application of security and package updates
+- Consistent hostname and DNS configuration
+
+This approach aligns with standard enterprise server provisioning practices.
+
+## Application Stack Deployment
+
+The osTicket application stack was deployed using distribution-supported packages to ensure maintainability and security.
+
+Components included:
+- **Apache 2** as the HTTP service
+- **PHP 8.2** as the application runtime
+- Required PHP extensions for email processing, database access, and session handling
+- **MariaDB** as the relational database backend
+
+All services were configured to start automatically and verified for stability prior to application deployment.
+
+## Database Configuration and Hardening
+
+MariaDB was configured following vendor-recommended security practices.
 
 Key decisions:
-- No desktop environment required for server operation
-- SSH enabled for remote administration
-- System packages updated immediately after installation
+- Dedicated database created exclusively for osTicket
+- Application-specific database user
+- Least-privilege permissions
+- Local-only database access
 
-Post-installation updates were applied to ensure all packages were current before application deployment.
+Database connectivity was validated prior to application installation to eliminate authentication or schema-related failures during runtime.
 
-## Web and Application Stack Installation
+## Application Deployment
 
-The following components were installed to support the osTicket application:
+The osTicket application was deployed manually to maintain explicit control over file placement and permissions.
 
-- **Apache 2** as the web server
-- **PHP 8.2** as the application runtime
-- Required PHP extensions for osTicket functionality
-- **MariaDB** as the backend database
-
-All services were enabled and configured to start automatically to ensure persistence across reboots.
-
-## Database Configuration
-
-MariaDB was secured using vendor-recommended hardening procedures to reduce default attack vectors.
-
-A dedicated database and database user were created for osTicket:
-- Application-specific database isolation
-- Least-privilege access model
-- Credentials restricted to local access only
-
-Database access was verified prior to application installation to prevent runtime authentication failures.
-
-## osTicket Deployment
-
-The osTicket application was deployed manually to ensure transparency and control over file placement and permissions.
-
-Deployment steps included:
+Deployment actions included:
 - Downloading the official osTicket release
-- Extracting application files into the Apache web root
-- Assigning proper ownership to the web service account
-- Configuring file permissions required for installation
+- Extracting files into the Apache web root
+- Assigning ownership to the web service account
+- Applying restrictive default file permissions
 
-A writable configuration file was prepared exclusively for the duration of the installer process.
+Configuration files were made writable **only for the duration of installation**, minimizing exposure.
 
-## Web-Based Installer
+## Initial Application Configuration
 
-The osTicket web installer was completed using a browser-based interface.
+The osTicket web-based installer was used to complete initial application setup.
 
-Configuration steps included:
-- Defining helpdesk identity and system settings
-- Creating the initial administrative account
-- Connecting the application to the MariaDB backend
+Configuration actions included:
+- Defining helpdesk identity and system metadata
+- Creating an initial administrative account
+- Establishing database connectivity
 
-![Web-Based Installer](../screenshots/install-osticket.png)
+![osTicket Installer](../screenshots/install-osticket.png)
 
-Installer execution was monitored using Apache error logs to diagnose and resolve runtime issues.
+Installer behavior was monitored via Apache error logs to detect and resolve runtime or permission issues.
 
 ## Post-Installation Hardening
 
-After successful installation, the following security steps were performed:
+Immediately following installation, the application was hardened to prevent unauthorized reconfiguration.
 
+Hardening actions:
 - Removal of the osTicket setup directory
 - Restriction of configuration file permissions to read-only
-- Verification of service stability after restart
+- Validation of application behavior after service restarts
 
-These steps ensure the application cannot be reconfigured or reinstalled without explicit administrative action.
+These steps ensure the application cannot be reinstalled or modified without explicit administrative intervention.
 
-## Validation
+## Deployment Validation
 
-The deployment was validated through functional testing:
-- Access to the user ticket submission portal
-- Access to the agent and admin control panel
-- Successful creation and resolution of test tickets
-- Verification of application stability across service restarts
+The deployment was validated through functional and operational testing:
 
-![Validation](../screenshots/install-final.png)
+- Successful access to the user ticket submission portal
+- Successful access to the agent and administrator interfaces
+- Creation, processing, and resolution of test tickets
+- Verification of service persistence across system restarts
 
-Successful validation confirmed the system was ready for operational use.
+![Deployment Validation](../screenshots/install-final.png)
 
-## Phase 1 Completion
+Validation confirmed the platform was ready for integration with external enterprise services.
 
-At the conclusion of Phase 1, the environment met the following criteria:
-- Fully functional osTicket deployment
-- Stable application and database services
-- Secure baseline configuration
-- Documented installation process
+## Baseline Snapshot and Change Control
 
-The system was snapshotted to preserve a known-good state prior to Phase 2 enhancements.
+Upon successful validation, the system was snapshotted to preserve a known-good baseline state. This snapshot serves as a rollback point and reference for future configuration changes.
 
-## Next Phase
+Subsequent enhancements build upon this baseline rather than modifying it retroactively.
 
-Phase 2 will focus on:
-- Active Directory / LDAP authentication
-- Centralized identity integration
-- External service dependencies (SMTP, TLS)
-- Expanded security and operational features
+## Phase Completion Summary
 
-Phase 1 documentation will remain unchanged to preserve baseline integrity.
+At the conclusion of this phase, the environment met the following criteria:
+
+- Stable and functional osTicket deployment
+- Hardened baseline configuration
+- Verified application and database operation
+- Controlled and documented deployment process
+
+This phase establishes the foundation for identity integration, monitoring, and enterprise workflow configuration in later stages.
