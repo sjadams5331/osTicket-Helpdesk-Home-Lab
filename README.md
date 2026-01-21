@@ -34,7 +34,7 @@ The helpdesk is fully integrated with Active Directory using **LDAP over SSL (LD
 - **Domain:** lab.local  
 - **Domain Controller:** dc01.lab.local  
 - **LDAPS Port:** 636  
-- **Service Account:** svc_osticket@lab.local  
+- **Service Account:** svc_osticket@lab.local
 
 The Debian server trusts the internal Microsoft Certificate Authority, ensuring encrypted and validated directory communication.
 
