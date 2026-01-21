@@ -2,180 +2,216 @@
 
 ## Purpose
 
-This section documents how the helpdesk environment is **operated, maintained, and kept reliable over time**.
+This document describes how the helpdesk environment is **operated, maintained, and sustained over time**.  
+The focus is not initial deployment, but **ongoing reliability, security, and recoverability**.
 
-In real organizations, systems do not exist to be “set up once.”
-They exist to be:
-- Patched
-- Monitored
-- Audited
-- Backed up
-- Maintained with minimal disruption
+In enterprise environments, systems are judged by how they behave:
+- After updates
+- During failures
+- Under change
+- Over time
 
-This lab intentionally includes operational practices to demonstrate production awareness beyond initial deployment.
+This lab intentionally includes operational practices to demonstrate long-term ownership, not one-time setup.
 
 ## Operational Scope
 
-This environment is treated as a **long-running internal service**, not a disposable test VM.
+This environment is treated as a **persistent internal service**, not a disposable test system.
 
 Operational responsibility includes:
 - Identity services (Active Directory)
-- Ticketing platform (osTicket)
 - Authentication mechanisms (LDAP / LDAPS)
-- Database integrity
-- Service availability
-- Security posture
+- Ticketing platform (osTicket)
+- Database integrity and retention
+- Workflow enforcement and auditability
+- Service availability and failure recovery
 
-## System Maintenance Strategy
+All systems are assumed to be in continuous use.
 
-### Operating System Maintenance
+## Operating System Maintenance
 
-**Debian (osTicket Server)**
-- Regular package updates via `apt`
-- Security patches prioritized
-- Apache, PHP, and MariaDB services monitored after updates
-- Reboots scheduled intentionally, not randomly
+### Linux — osTicket Server (Debian)
 
-**Windows Server (Domain Controller)**
-- Patch Tuesday updates applied
-- Reboots coordinated to avoid authentication outages
-- Event logs reviewed post-update
+Operational practices include:
+- Regular security and package updates
+- Verification of Apache, PHP, and MariaDB services after patching
+- Intentional reboot scheduling to avoid surprise downtime
+- Log review following updates to detect regressions
 
-Maintenance windows are assumed, even in a lab environment.
+The server is treated as a production system where availability matters.
+
+### Windows Server — Domain Controller
+
+Operational practices include:
+- Scheduled Patch Tuesday updates
+- Reboot coordination to avoid authentication outages
+- Post-update verification of:
+  - AD DS
+  - DNS
+  - LDAPS functionality
+- Review of system and security event logs after changes
+
+Authentication services are treated as **critical infrastructure**.
 
 ## Application Maintenance (osTicket)
 
-### Upgrade Strategy
-- Minor version updates applied after review
-- Configuration backups taken prior to upgrades
-- Plugin compatibility verified before deployment
+### Upgrade Discipline
 
-The goal is to simulate **change management discipline**, not blind updating.
+osTicket updates are handled deliberately:
+- Release notes reviewed prior to upgrade
+- Configuration and database backups taken beforehand
+- Plugin compatibility verified
+- Post-upgrade validation performed
 
-### Configuration Drift Management
-Key configuration areas monitored:
+Blind updates are avoided to prevent workflow disruption.
+
+### Configuration Drift Awareness
+
+Key configuration areas are monitored for unintended change:
 - LDAP authentication settings
-- Department and role mappings
+- Department and role assignments
 - SLA definitions
-- Help topics and workflows
+- Help topics and escalation rules
 
-Changes are documented to prevent silent drift over time.
+Changes are documented to preserve operational intent and auditability.
 
 ## Identity and Access Maintenance
 
 ### Active Directory Hygiene
-- Disabled accounts reviewed periodically
-- Group memberships audited
-- Service accounts monitored for password expiration
-- Least-privilege principles enforced
 
-### LDAP / LDAPS Validation
-- Certificate trust verified
-- Bind account permissions reviewed
-- Authentication logs monitored for anomalies
+Ongoing directory maintenance includes:
+- Review of disabled or stale accounts
+- Group membership audits
+- Service account monitoring
+- Enforcement of least-privilege access
 
-Authentication failures are treated as **priority incidents**, not nuisances.
+Identity hygiene is treated as a preventive control, not a cleanup task.
 
-## Database Maintenance
+### LDAP / LDAPS Health Validation
 
-**MariaDB Responsibilities**
+Authentication health is monitored through:
+- Periodic LDAPS connectivity testing
+- Certificate trust validation
+- Review of authentication failures
+- Detection of anomalous login behavior
+
+Authentication failures are treated as **priority incidents**, not background noise.
+
+## Database Operations
+
+### MariaDB Responsibilities
+
+The database is treated as operational data storage, not disposable logs.
+
+Operational tasks include:
 - Regular logical backups
-- Integrity checks
-- Monitoring for failed writes or corruption
 - Disk space monitoring
+- Integrity checks
+- Review of database service logs
 
-Ticket history is treated as **operational data**, not expendable logs.
+Ticket history and audit trails are preserved intentionally.
 
-## Backup Strategy
+## Backup and Recovery Strategy
 
-### What Is Backed Up
+### Protected Data
+
+Backups include:
 - osTicket database
-- osTicket configuration files
+- Application configuration files
 - LDAP integration settings
-- Knowledge Base content
+- Knowledge base content
 
-### Why It Matters
-Ticket history, escalation records, and audit trails are critical in real environments.
-This lab treats them the same way.
+### Recovery Philosophy
 
-## Monitoring and Health Checks
+Backups are considered successful only if recovery is possible.
+The focus is on **restoration capability**, not backup existence.
+
+## Monitoring and Service Visibility
 
 ### Current State
-Manual monitoring includes:
-- Service availability checks
+
+Operational visibility currently includes:
+- Manual service health checks
 - Authentication testing
-- Log review (Apache, MariaDB, system logs)
+- Review of system, application, and database logs
 
-### Planned Enhancements
-- Automated monitoring (Zabbix / Prometheus)
-- Service health dashboards
-- Alert-driven ticket creation
-- NOC visibility
+This establishes a baseline understanding of normal behavior.
 
-This environment is designed to **grow into monitoring**, not pretend it already has it.
+### Integrated Monitoring (Zabbix)
+
+This environment is designed to integrate with centralized monitoring.
+
+Planned and implemented monitoring concepts include:
+- Service availability checks
+- Authentication service monitoring
+- Resource utilization visibility
+- Alert-driven incident awareness
+
+Monitoring is treated as an operational multiplier, not an afterthought.
 
 ## Incident Handling During Operations
 
-When operational issues occur:
-1. Ticket is created or flagged
-2. SLA is applied
-3. Tier 1 validates symptoms
-4. Tier 2 performs remediation
-5. Root cause documented
-6. Knowledge Base updated if applicable
+Operational incidents follow established workflows:
+
+1. Issue detected (user report or monitoring)
+2. Ticket created or flagged
+3. SLA applied
+4. Tier 1 validates symptoms
+5. Tier 2 performs remediation
+6. Root cause documented
+7. Knowledge base updated if applicable
 
 Operational incidents feed directly into process improvement.
 
 ## Change Management Discipline
 
-All significant changes follow a simple but realistic flow:
-- Identify change scope
-- Assess impact
-- Apply change
+All non-trivial changes follow a structured approach:
+- Define change scope
+- Assess operational impact
+- Apply change during appropriate window
 - Validate functionality
 - Document outcome
 
-Even in a lab, uncontrolled changes are treated as technical debt.
+Uncontrolled changes are treated as technical debt.
 
-## Documentation as an Operational Tool
+## Documentation as an Operational Asset
 
-Documentation is considered part of operations, not an afterthought.
+Documentation is considered part of the operational system.
 
 Maintained documentation includes:
-- Architecture diagrams
-- Escalation logic
+- Architecture and trust boundaries
+- Workflow and escalation logic
 - Known issues and resolutions
 - Authentication dependencies
 
-This ensures continuity and knowledge transfer, even in a single-admin environment.
+This ensures continuity even in single-admin environments.
 
 ## Failure Scenarios Considered
 
-This lab explicitly accounts for:
+This lab explicitly accounts for realistic failure scenarios:
 - Domain Controller downtime
-- LDAP authentication failure
-- Database corruption
+- LDAPS authentication failure
+- Database corruption or disk exhaustion
 - Certificate expiration
-- Misconfiguration during updates
+- Configuration drift after updates
 
-Planning for failure is considered a **baseline competency**, not pessimism.
+Planning for failure is treated as a baseline operational skill.
 
 ## Why This Matters
 
-Operations and maintenance are what separate:
-- Demos from systems
+Operations and maintenance separate:
+- Deployments from systems
 - Labs from environments
-- Setup knowledge from operational competence
+- Setup knowledge from ownership
 
-This section demonstrates the ability to **keep systems running**, not just deploy them once.
+This section demonstrates the ability to **keep systems running**, recover them when they fail, and maintain trust over time.
 
-## Future Enhancements
+## Future Operational Enhancements
 
-Planned operational improvements include:
-- Automated backups
-- Monitoring-driven incident creation
+Planned improvements include:
+- Automated backup scheduling
+- Monitoring-driven ticket creation
 - NOC alert workflows
-- Scheduled maintenance documentation
+- Scheduled maintenance records
 - Post-incident review templates
 
 ## Summary
@@ -185,8 +221,8 @@ This helpdesk environment is treated as a living system.
 It is:
 - Maintained deliberately
 - Secured intentionally
-- Documented continuously
-- Designed for failure and recovery
+- Observed continuously
+- Designed to fail safely and recover cleanly
 
 Operations and maintenance are not optional.
-They are the proof that this lab mirrors real enterprise IT.
+They are the proof that this environment reflects real enterprise IT.
