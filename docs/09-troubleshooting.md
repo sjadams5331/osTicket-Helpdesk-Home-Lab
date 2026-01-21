@@ -2,193 +2,184 @@
 
 ## Purpose
 
-This section documents **realistic failure modes, troubleshooting methodology, and resolution patterns** within the helpdesk environment.
+This document describes **realistic failure scenarios, troubleshooting methodology, and incident resolution practices** used within the helpdesk environment.
 
-The objective is not to show that problems never occur.
-It is to demonstrate:
-- Structured diagnosis
-- Tier-appropriate response
-- Clear escalation boundaries
-- Root cause analysis
-- Documentation discipline
+The objective is not to suggest that failures are rare.  
+The objective is to demonstrate that failures are:
+- Detected deliberately
+- Diagnosed methodically
+- Resolved safely
+- Documented clearly
+- Used to improve operations
 
-In enterprise IT, troubleshooting skill matters more than setup skill.
+In enterprise IT, troubleshooting competence matters more than initial setup.
 
-## Troubleshooting Philosophy
+## Troubleshooting Methodology
 
-All issues are approached using a consistent framework:
+All incidents follow a structured troubleshooting framework:
 
-1. Identify symptoms
-2. Confirm scope and impact
-3. Isolate the failure domain
-4. Apply corrective action
+1. Identify reported symptoms
+2. Confirm scope and business impact
+3. Isolate the affected system or dependency
+4. Apply corrective action within authority
 5. Verify resolution
-6. Document findings
+6. Document root cause and outcome
 
-Guessing is avoided.
-Changes are intentional.
+Guessing is avoided.  
+Changes are intentional.  
 Fixes are repeatable.
 
-## Common Failure Domains
+## Failure Domains
 
-Troubleshooting is organized by **system dependency**, not by guesswork.
+Incidents are categorized by **system dependency**, not symptom alone.
 
-### Identity & Authentication
+### Identity and Authentication
 - Active Directory availability
 - LDAP / LDAPS connectivity
 - Service account permissions
-- Certificate trust issues
-- Time synchronization
+- Certificate trust failures
+- Time synchronization issues
 
 ### Application (osTicket)
-- Agent login failures
-- Permission mismatches
-- Department assignment errors
-- Workflow misfires
+- Agent authentication failures
+- Role or department misalignment
+- SLA assignment errors
+- Workflow enforcement issues
 
 ### Infrastructure
-- Network connectivity
-- DNS resolution
+- Network connectivity and DNS
 - Service availability (Apache, MariaDB)
-- Disk space and resource exhaustion
+- Disk space or resource exhaustion
+- Post-maintenance service failures
 
 ## Documented Incident Scenarios
 
 ### Incident 1: Agent Unable to Authenticate via Active Directory
 
-**Symptoms**
-- Some agents can log in
-- Others receive authentication errors
-- Local osTicket auth disabled
+**Reported Symptoms**
+- Some agents authenticate successfully
+- Other agents receive authentication failures
+- Local osTicket authentication is disabled
 
-**Initial Tier**
-- Tier 1
-
-**Diagnosis**
-- Issue isolated to specific AD users
-- LDAP plugin operational
-- No global authentication outage
+**Initial Handling**
+- Tier 1 validated issue scope
+- Confirmed no global authentication outage
+- Verified LDAP plugin operational
 
 **Escalation**
-- Escalated to Tier 2 due to identity scope
+- Escalated to Tier 2 due to identity-related scope
 
 **Root Cause**
-- AD group membership mismatch
-- LDAP filter or role mapping inconsistency
+- Active Directory group membership mismatch
+- Role mapping inconsistency between AD and osTicket
 
 **Resolution**
-- Corrected group assignment
-- Validated LDAP lookup
-- Confirmed role mapping in osTicket
+- Corrected group membership
+- Verified LDAP lookup behavior
+- Confirmed role assignment within osTicket
 
 **Outcome**
 - Authentication restored
 - Group membership documentation updated
 
-### Incident 2: Tickets Not Assigning Correct SLA
+### Incident 2: Incorrect SLA Assignment on New Tickets
 
-**Symptoms**
+**Reported Symptoms**
 - Tickets defaulting to incorrect SLA
-- Response timers inaccurate
+- Response timers inconsistent with issue priority
 
-**Initial Tier**
-- Tier 1
-
-**Diagnosis**
-- Issue reproducible across tickets
-- Help topic assignment inconsistent
+**Initial Handling**
+- Tier 1 reproduced issue across multiple tickets
+- Confirmed issue not user-specific
 
 **Escalation**
-- Tier 2 for workflow review
+- Tier 2 reviewed workflow and help topic configuration
 
 **Root Cause**
-- Help topic not correctly mapped to SLA
-- Workflow order misconfigured
+- Help topic incorrectly mapped to SLA
+- Workflow evaluation order misconfigured
 
 **Resolution**
 - Corrected help topic rules
 - Validated SLA assignment logic
 
 **Outcome**
-- SLA timers functioning as expected
+- SLA timers functioning as designed
 - Workflow documentation updated
 
-### Incident 3: osTicket Web Interface Unreachable
+### Incident 3: osTicket Web Interface Unreachable After Maintenance
 
-**Symptoms**
-- HTTP connection failure
-- Server reachable via ping
-- Other services operational
+**Reported Symptoms**
+- HTTP access unavailable
+- Server reachable via network
+- Database service operational
 
-**Initial Tier**
-- Tier 1
-
-**Diagnosis**
-- Apache service not responding
-- System resources normal
+**Initial Handling**
+- Tier 1 confirmed infrastructure reachability
+- Identified application-level failure
 
 **Escalation**
-- Tier 2
+- Tier 2 assumed remediation authority
 
 **Root Cause**
-- Apache service stopped after update
-- Configuration reload failure
+- Apache service failed to restart after system update
+- Configuration reload error detected in logs
 
 **Resolution**
-- Apache restarted
-- Logs reviewed
+- Apache service restarted
 - Configuration validated
+- Logs reviewed for recurring indicators
 
 **Outcome**
-- Service restored
+- Web interface restored
 - Maintenance checklist updated
 
 ## Escalation Decision Matrix
 
-| Indicator                          | Tier 1 | Tier 2 | NOC |
-|-----------------------------------|--------|--------|-----|
-| Single-user issue                 | ✓      |        |     |
-| Multi-user impact                 |        | ✓      |     |
-| Authentication system failure     |        | ✓      |     |
-| Infrastructure outage             |        |        | ✓   |
-| SLA breach imminent               |        | ✓      |     |
+| Indicator                      | Tier 1 | Tier 2 | NOC |
+|-------------------------------|--------|--------|-----|
+| Single-user issue             | ✓      |        |     |
+| Multi-user impact             |        | ✓      |     |
+| Authentication system failure |        | ✓      |     |
+| Infrastructure outage         |        |        | ✓   |
+| SLA breach imminent           |        | ✓      |     |
 
-Escalation is based on **impact and authority**, not guesswork.
+Escalation is driven by **impact and authority**, not guesswork.
 
-## Logging and Evidence Collection
+## Evidence Collection and Logging
 
 During troubleshooting:
-- System logs are preserved
-- Authentication logs reviewed
-- Configuration changes documented
-- Timestamps recorded
+- Relevant system logs are reviewed
+- Authentication events are examined
+- Configuration changes are documented
+- Timestamps are preserved for correlation
 
-Evidence is treated as part of the resolution process.
+Evidence is treated as part of the resolution, not an afterthought.
 
 ## Post-Incident Actions
 
-After resolution:
-- Root cause documented
-- Knowledge Base updated if applicable
-- Tier 1 guidance improved
-- Preventative steps identified
+After incident resolution:
+- Root cause is documented
+- Knowledge Base updated where appropriate
+- Tier 1 guidance refined
+- Preventative controls identified
 
-Troubleshooting feeds back into **process improvement**, not just closure.
+Troubleshooting feeds directly into **operational improvement**, not just ticket closure.
 
-## Failure Scenarios Explicitly Planned For
+## Failure Scenarios Explicitly Accounted For
 
-This environment accounts for:
+This environment plans for:
 - Domain Controller downtime
 - LDAPS certificate expiration
 - Service account password expiration
 - Database connectivity loss
-- Network misconfiguration
+- Network or DNS misconfiguration
 
-Each scenario has a defined response path.
+Each scenario has a defined escalation and response path.
 
 ## Why This Matters
 
-Anyone can follow install guides.
+Anyone can follow installation guides.  
 Not everyone can:
 - Diagnose layered failures
 - Escalate appropriately
@@ -199,14 +190,14 @@ This troubleshooting framework demonstrates **operational maturity**, not just t
 
 ## Summary
 
-Problems are expected.
+Failures are expected.  
 Silence is suspicious.
 
 This lab demonstrates the ability to:
-- Identify failures
-- Fix them safely
-- Learn from them
+- Detect issues
+- Resolve them safely
+- Learn from failures
 - Improve the system over time
 
-Troubleshooting is not a weakness.
-It is the proof that the environment is real.
+Troubleshooting is not a weakness.  
+It is proof that the environment is real.
