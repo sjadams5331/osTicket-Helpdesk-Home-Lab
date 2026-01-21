@@ -41,7 +41,7 @@ The osTicket server is treated as a production system where availability and sta
 
 **Post-maintenance service validation:**
 
-![Post-maintenance service verification](../screenshots/post-maintainance.png)
+![Post-maintenance service verification](../screenshots/post-maintenance.png)
 
 ### Windows Server — Domain Controller
 
