@@ -99,7 +99,7 @@ Actions performed by Tier 2:
 
 ### Tier 2 Root Cause Evidence
 
-![Tier 2 Root Cause Evidence](../screenshots/tier1-internalnote.png)
+![Tier 2 Root Cause Evidence](../screenshots/tier2_internalnote.png)
 
 **Root Cause Identified**
 - NTFS inheritance was disabled on the Finance directory  
