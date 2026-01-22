@@ -2,202 +2,179 @@
 
 ## Purpose
 
-This document describes **realistic failure scenarios, troubleshooting methodology, and incident resolution practices** used within the helpdesk environment.
+This document demonstrates **real-world troubleshooting, escalation judgment, and root cause analysis** within the helpdesk environment.
 
-The objective is not to suggest that failures are rare.  
-The objective is to demonstrate that failures are:
-- Detected deliberately
-- Diagnosed methodically
-- Resolved safely
-- Documented clearly
-- Used to improve operations
+The objective is not to imply that failures are rare.  
+The objective is to show that failures are handled with:
 
-In enterprise IT, troubleshooting competence matters more than initial setup.
+- Structured diagnosis  
+- Tier-appropriate authority  
+- Clear escalation justification  
+- Verifiable root cause analysis  
+- Auditable documentation  
+
+In enterprise IT, troubleshooting discipline matters more than initial setup.
 
 ## Troubleshooting Methodology
 
-All incidents follow a structured troubleshooting framework:
+All incidents follow a consistent diagnostic framework:
 
-1. Identify reported symptoms
-2. Confirm scope and business impact
-3. Isolate the affected system or dependency
-4. Apply corrective action within authority
-5. Verify resolution
-6. Document root cause and outcome
+1. Identify reported symptoms  
+2. Confirm scope and business impact  
+3. Eliminate likely failure domains  
+4. Escalate when authority or access limits are reached  
+5. Apply corrective action  
+6. Verify resolution  
+7. Document findings for reuse  
 
 Guessing is avoided.  
-Changes are intentional.  
+Changes are deliberate.  
 Fixes are repeatable.
 
 ## Failure Domains
 
-Incidents are categorized by **system dependency**, not symptom alone.
+Incidents are categorized by **system dependency**, not surface symptoms.
 
-### Identity and Authentication
-- Active Directory availability
-- LDAP / LDAPS connectivity
-- Service account permissions
-- Certificate trust failures
-- Time synchronization issues
+### Identity & Access
+- Active Directory group membership
+- Authentication vs authorization failures
+- Directory dependency validation
 
 ### Application (osTicket)
-- Agent authentication failures
-- Role or department misalignment
-- SLA assignment errors
-- Workflow enforcement issues
+- Role enforcement
+- Workflow routing
+- SLA application
 
 ### Infrastructure
-- Network connectivity and DNS
-- Service availability (Apache, MariaDB)
-- Disk space or resource exhaustion
-- Post-maintenance service failures
+- File server permissions
+- NTFS inheritance behavior
+- Service availability
 
-## Documented Incident Scenarios
+## Primary Incident Case Study  
+### User Unable to Access Finance Shared Drive
 
-### Incident 1: Agent Unable to Authenticate via Active Directory
+This incident is used as a full escalation example because it spans **multiple systems**, requires **tier separation**, and reflects a common enterprise failure mode.
 
-**Reported Symptoms**
-- Some agents authenticate successfully
-- Other agents receive authentication failures
-- Local osTicket authentication is disabled
+## Incident Summary
 
-**Initial Handling**
-- Tier 1 validated issue scope
-- Confirmed no global authentication outage
-- Verified LDAP plugin operational
+**User Reported Issue**  
+User reports receiving an “Access Denied” error when attempting to access the Finance shared drive. User states they are part of the Finance department and previously had access.
 
-**Escalation**
-- Escalated to Tier 2 due to identity-related scope
+**Impact**
+- Single user blocked from Finance resources  
+- Business impact limited to role-specific tasks  
 
-**Root Cause**
-- Active Directory group membership mismatch
-- Role mapping inconsistency between AD and osTicket
+## Tier 1 — Initial Diagnosis and Scope Validation
 
-**Resolution**
-- Corrected group membership
-- Verified LDAP lookup behavior
-- Confirmed role assignment within osTicket
+Tier 1 responsibility is to **verify symptoms, confirm scope, and rule out common causes** without making system-level changes.
 
-**Outcome**
-- Authentication restored
-- Group membership documentation updated
+Actions performed by Tier 1:
+- Verified user membership in Finance Active Directory security group  
+- Confirmed issue persists after logoff/logon and system reboot  
+- Tested access from alternate workstation  
+- Confirmed no widespread Finance share outage  
 
-### Incident 2: Incorrect SLA Assignment on New Tickets
+Based on findings, Tier 1 identified the issue as **authorization-related**, not authentication or endpoint-related.
 
-**Reported Symptoms**
-- Tickets defaulting to incorrect SLA
-- Response timers inconsistent with issue priority
+### Tier 1 Diagnostic Evidence
 
-**Initial Handling**
-- Tier 1 reproduced issue across multiple tickets
-- Confirmed issue not user-specific
+![Tier 1 Diagnostic Evidence](../screenshots/tier1_internalnote.png)
 
-**Escalation**
-- Tier 2 reviewed workflow and help topic configuration
+**Escalation Justification**
+- Correct AD group membership confirmed  
+- Issue reproducible across systems  
+- Indicates file system–level permission issue  
+- Escalation required due to Tier 1 authority limits  
 
-**Root Cause**
-- Help topic incorrectly mapped to SLA
-- Workflow evaluation order misconfigured
+This escalation demonstrates deliberate troubleshooting rather than premature handoff.
 
-**Resolution**
-- Corrected help topic rules
-- Validated SLA assignment logic
+## Tier 2 — Root Cause Analysis and Remediation
 
-**Outcome**
-- SLA timers functioning as designed
-- Workflow documentation updated
+Tier 2 assumed responsibility due to the need for **server-level inspection and permission changes**.
 
-### Incident 3: osTicket Web Interface Unreachable After Maintenance
+Actions performed by Tier 2:
+- Reviewed Tier 1 diagnostic notes  
+- Confirmed group membership and reproduced issue  
+- Inspected NTFS permissions on Finance share hosted on `FS01`  
 
-**Reported Symptoms**
-- HTTP access unavailable
-- Server reachable via network
-- Database service operational
+### Tier 2 Root Cause Evidence
 
-**Initial Handling**
-- Tier 1 confirmed infrastructure reachability
-- Identified application-level failure
+![Tier 2 Root Cause Evidence](../screenshots/tier1-internalnote.png)
 
-**Escalation**
-- Tier 2 assumed remediation authority
+**Root Cause Identified**
+- NTFS inheritance was disabled on the Finance directory  
+- Finance group permissions were not propagating to child objects  
+- Access denied despite correct Active Directory group membership  
 
-**Root Cause**
-- Apache service failed to restart after system update
-- Configuration reload error detected in logs
+This distinction highlights the difference between **identity correctness** and **authorization enforcement**.
 
-**Resolution**
-- Apache service restarted
-- Configuration validated
-- Logs reviewed for recurring indicators
+## Resolution and Verification
+
+**Corrective Action**
+- Restored NTFS inheritance on Finance share  
+- Verified effective permissions  
+- Confirmed access restored with user  
 
 **Outcome**
-- Web interface restored
-- Maintenance checklist updated
+- User access restored successfully  
+- No broader infrastructure impact  
+- Incident fully documented  
+
+Resolution included both remediation and verification before closure.
 
 ## Escalation Decision Matrix
 
 | Indicator                      | Tier 1 | Tier 2 | NOC |
-|-------------------------------|--------|--------|-----|
-| Single-user issue             | ✓      |        |     |
-| Multi-user impact             |        | ✓      |     |
-| Authentication system failure |        | ✓      |     |
-| Infrastructure outage         |        |        | ✓   |
-| SLA breach imminent           |        | ✓      |     |
+|--------------------------------|--------|--------|-----|
+| Single-user issue              | ✓      |        |     |
+| Authorization failure          |        | ✓      |     |
+| Multi-user impact              |        | ✓      |     |
+| Infrastructure outage          |        |        | ✓   |
+| SLA breach risk                |        | ✓      |     |
 
-Escalation is driven by **impact and authority**, not guesswork.
+Escalation is driven by **impact and authority**, not convenience.
 
-## Evidence Collection and Logging
+## Evidence Collection and Documentation
 
-During troubleshooting:
-- Relevant system logs are reviewed
-- Authentication events are examined
-- Configuration changes are documented
-- Timestamps are preserved for correlation
+Throughout troubleshooting:
+- Internal ticket notes captured diagnostic reasoning  
+- Assumptions were validated before escalation  
+- Root cause was documented clearly  
+- Resolution steps were preserved for audit and reuse  
 
-Evidence is treated as part of the resolution, not an afterthought.
+Evidence is treated as part of the fix, not an afterthought.
 
 ## Post-Incident Actions
 
-After incident resolution:
-- Root cause is documented
-- Knowledge Base updated where appropriate
-- Tier 1 guidance refined
-- Preventative controls identified
+After resolution:
+- Escalation criteria refined for Tier 1  
+- Documentation updated to reflect NTFS inheritance risks  
+- Incident retained as a reference case  
 
-Troubleshooting feeds directly into **operational improvement**, not just ticket closure.
-
-## Failure Scenarios Explicitly Accounted For
-
-This environment plans for:
-- Domain Controller downtime
-- LDAPS certificate expiration
-- Service account password expiration
-- Database connectivity loss
-- Network or DNS misconfiguration
-
-Each scenario has a defined escalation and response path.
+Troubleshooting outcomes feed directly into **operational improvement**.
 
 ## Why This Matters
 
-Anyone can follow installation guides.  
-Not everyone can:
-- Diagnose layered failures
-- Escalate appropriately
-- Preserve audit trails
-- Prevent recurrence
+Many environments can deploy systems.  
+Fewer can diagnose layered failures involving:
 
-This troubleshooting framework demonstrates **operational maturity**, not just technical familiarity.
+- Active Directory  
+- File system permissions  
+- Authorization boundaries  
+- Tiered responsibility  
+
+This incident demonstrates **operational maturity**, not just technical familiarity.
 
 ## Summary
 
 Failures are expected.  
-Silence is suspicious.
+Poor diagnosis is optional.
 
 This lab demonstrates the ability to:
-- Detect issues
-- Resolve them safely
-- Learn from failures
-- Improve the system over time
+- Detect issues accurately  
+- Escalate responsibly  
+- Resolve safely  
+- Document for future reuse  
 
 Troubleshooting is not a weakness.  
 It is proof that the environment is real.
