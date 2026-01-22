@@ -35,6 +35,8 @@ Tickets are created via:
 - End-user submission from a workstation
 - Manual creation by Tier 2 (on behalf of users)
 
+![Ticket Creation](../screenshots/submitting_ticket.png)
+
 All tickets are initially routed to the **Tier 1 department**.
 
 ### 2. Tier 1 Intake and Triage
@@ -66,8 +68,6 @@ Escalation occurs when:
   - Relevant screenshots or logs
 - Ticket reassigned to Tier 2
 
-![Escalation to Tier 2](../screenshots/escalating.png)
-
 This ensures Tier 2 receives context, not guesswork.
 
 ### 4. Tier 2 Resolution
@@ -83,7 +83,7 @@ This ensures Tier 2 receives context, not guesswork.
 - Modify SLAs and priority
 - Escalate to NOC
 
-![Tier 2 Resolution](../screenshots/resolved_escalation.png)
+![Tier 2 Resolution](../screenshots/closing_ticket.png)
 
 Resolution steps are documented before ticket closure.
 
